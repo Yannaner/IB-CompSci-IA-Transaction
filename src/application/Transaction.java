@@ -9,6 +9,8 @@ public class Transaction {
     private double marketWorth;
     private Timestamp transaction_time;
     private String stratscode;
+    
+    //constructor for every transaction data
     public Transaction(int id, String cryptocurrency, double price, double marketWorth,String stratscode, Timestamp currentTimestamp) {
         this.id = id;
         this.cryptocurrency = cryptocurrency;
