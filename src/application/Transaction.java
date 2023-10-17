@@ -10,7 +10,7 @@ public class Transaction {
     private Timestamp transaction_time;
     private String stratscode;
     
-    //constructor s
+    //constructor 
     public Transaction(int id, String cryptocurrency, double price, double marketWorth,String stratscode, Timestamp currentTimestamp) {
         this.id = id;
         this.cryptocurrency = cryptocurrency;
