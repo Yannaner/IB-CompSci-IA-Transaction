@@ -1,5 +1,7 @@
 package application;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -95,8 +97,16 @@ public class TransactionController {
         Label StratsCodeLabel = new Label("Strats Code:");
         StratsCodeField = new TextField();
         Button addButton = new Button("Add Transaction");
+        Button importButton = new Button("Import");
+        
+        VBox importBox = new VBox(10, importButton);
+        importBox.setPadding(new Insets(10));
+
+        importButton.setOnAction(event -> importTransactionsFromCsv());
+        
+        
         VBox addTransactionBox = new VBox(10, cryptocurrencyLabel, cryptocurrencyField, priceLabel, priceField,
-                marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, addButton);
+                marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, addButton,importButton);
         addTransactionBox.setPadding(new Insets(10));
 
         addButton.setOnAction(event -> addTransaction());
@@ -122,32 +132,35 @@ public class TransactionController {
         // Data entry panel for editing and deleting previous transactions
         Button editButton = new Button("Edit Transaction");
         Button deleteButton = new Button("Delete Transaction");
-
-        VBox editAndDeleteBox = new VBox(10);
-        editAndDeleteBox.setPadding(new Insets(10));
-        editAndDeleteBox.getChildren().addAll(editButton, deleteButton);
-
-        editButton.setOnAction(event -> editTransaction());
-        deleteButton.setOnAction(event -> deleteTransaction());
-
-        // Data entry panel for searching previous transactions by time and cryptocurrency
+        Button searchButton = new Button("Search");
+        Button refresh = new Button("Refresh");
         DatePicker startDatePicker = new DatePicker();
         Label toLabel = new Label("to");
         DatePicker endDatePicker = new DatePicker();
-        TextField searchCryptocurrencyField = new TextField();
-        Button searchButton = new Button("Search");
-        VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker, searchCryptocurrencyField, searchButton);
-        searchBox.setPadding(new Insets(10));
+        Label CCYLabel = new Label("CCY");
+        TextField CCYname = new TextField();
+        VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker,CCYLabel,CCYname, searchButton,refresh);
+        searchBox.setPadding(new Insets(5));
+        
+        
+        VBox editAndDeleteBox = new VBox(10);
+        editAndDeleteBox.setPadding(new Insets(10));
+        editAndDeleteBox.getChildren().addAll(editButton, deleteButton,searchBox,startDatePicker, toLabel, endDatePicker,searchButton);
 
-        searchButton.setOnAction(event -> searchTransactions(startDatePicker.getValue(), endDatePicker.getValue(),
-                searchCryptocurrencyField.getText()));
-
-        // Data entry panel for importing transactions
-        Button importCsvButton = new Button("Import CSV");
-        VBox importBox = new VBox(10, importCsvButton);
-        importBox.setPadding(new Insets(10));
-
-        importCsvButton.setOnAction(event -> importTransactionsFromCsv());
+        editButton.setOnAction(event -> editTransaction());
+        deleteButton.setOnAction(event -> deleteTransaction());
+//BUG HERE, IT CANT SEARCH
+        if(CCYname.getText()!=null && startDatePicker.getValue()!=null &&endDatePicker.getValue()!=null) {
+        searchButton.setOnAction(event -> searchwithBoth(startDatePicker.getValue(), endDatePicker.getValue(),CCYname.getText()));
+        CCYname.clear();
+        }else if(CCYname.getText()==null){
+        searchButton.setOnAction(event -> searchTransactionsByDate(startDatePicker.getValue(), endDatePicker.getValue()));    
+        
+        }else {
+        searchButton.setOnAction(event -> searchTransactionsByCryptocurrency(CCYname.getText()));
+        }
+      
+        refresh.setOnAction(event -> loadTransactions());
 
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -164,13 +177,8 @@ public class TransactionController {
             }
         });
 
-        Tab searchTab = new Tab("Search Transactions");
-        searchTab.setContent(searchBox);
-
-        Tab importTab = new Tab("Import Transactions");
-        importTab.setContent(importBox);
-
-        tabPane.getTabs().addAll(addTransactionTab, viewTransactionsTab, searchTab, importTab);
+       
+        tabPane.getTabs().addAll(addTransactionTab, viewTransactionsTab);
 
         VBox mainLayout = new VBox(tabPane);
 
@@ -289,9 +297,44 @@ public class TransactionController {
         }
     }
 
-    private void searchTransactions(LocalDate startDate, LocalDate endDate, String cryptocurrency) {
-        
+    private void searchTransactionsByDate(LocalDate startDate, LocalDate endDate) {
+        ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
+
+        for (Transaction transaction : transactionTable.getItems()) {
+            LocalDate transactionDate = transaction.getTimestamp().toLocalDateTime().toLocalDate();
+            if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
+                filteredTransactions.add(transaction);
+            }
+        }
+
+        transactionTable.setItems(filteredTransactions);
     }
+    private void searchTransactionsByCryptocurrency(String cryptocurrency) {
+        ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
+
+        for (Transaction transaction : transactionTable.getItems()) {
+            if (transaction.getCryptocurrency().equalsIgnoreCase(cryptocurrency)) {
+                filteredTransactions.add(transaction);
+            }
+        }
+
+        transactionTable.setItems(filteredTransactions);
+    }
+    private void searchwithBoth(LocalDate startDate, LocalDate endDate,String cryptocurrency) {
+        ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
+
+        for (Transaction transaction : transactionTable.getItems()) {
+        	LocalDate transactionDate = transaction.getTimestamp().toLocalDateTime().toLocalDate();
+            if (transaction.getCryptocurrency().equalsIgnoreCase(cryptocurrency)) {
+            	if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
+                    filteredTransactions.add(transaction);
+                }
+            }
+        }
+
+        transactionTable.setItems(filteredTransactions);
+    }
+ 
 
     private void deleteTransaction() {
         Transaction selectedTransaction = transactionTable.getSelectionModel().getSelectedItem();
