@@ -149,17 +149,18 @@ public class TransactionController {
 
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
-//BUG HERE, IT CANT SEARCH
+        
+        //BUG HERE, IT CANT SEARCH
         if(CCYname.getText()!=null && startDatePicker.getValue()!=null &&endDatePicker.getValue()!=null) {
         searchButton.setOnAction(event -> searchwithBoth(startDatePicker.getValue(), endDatePicker.getValue(),CCYname.getText()));
         CCYname.clear();
         }else if(CCYname.getText()==null){
-        searchButton.setOnAction(event -> searchTransactionsByDate(startDatePicker.getValue(), endDatePicker.getValue()));    
+        searchButton.setOnAction(event -> searchTransactions(startDatePicker.getValue(), endDatePicker.getValue()));    
         
         }else {
-        searchButton.setOnAction(event -> searchTransactionsByCryptocurrency(CCYname.getText()));
+        searchButton.setOnAction(event -> searchTransactions(CCYname.getText()));
         }
-      
+        //refresh the loading page with refresh button
         refresh.setOnAction(event -> loadTransactions());
 
         TabPane tabPane = new TabPane();
@@ -196,9 +197,10 @@ public class TransactionController {
     	double marketWorth = Double.parseDouble(marketWorthField.getText());
     	double price = Double.parseDouble(priceField.getText());
     	String stratsCode = StratsCodeField.getText();
-    	//current timestamp 
     	Timestamp timestamp = Timestamp.from(Instant.now());
+    	//time rn
     	
+    	//adding transaction to the database
     	databaseManager.addTransaction(cryptocurrency, price, marketWorth,stratsCode, timestamp);
     	
     	
@@ -297,7 +299,7 @@ public class TransactionController {
         }
     }
 
-    private void searchTransactionsByDate(LocalDate startDate, LocalDate endDate) {
+    private void searchTransactions(LocalDate startDate, LocalDate endDate) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
         for (Transaction transaction : transactionTable.getItems()) {
@@ -309,8 +311,8 @@ public class TransactionController {
 
         transactionTable.setItems(filteredTransactions);
     }
-    private void searchTransactionsByCryptocurrency(String cryptocurrency) {
-        ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
+    private void searchTransactions(String cryptocurrency) {
+    	ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
         for (Transaction transaction : transactionTable.getItems()) {
             if (transaction.getCryptocurrency().equalsIgnoreCase(cryptocurrency)) {
@@ -320,6 +322,7 @@ public class TransactionController {
 
         transactionTable.setItems(filteredTransactions);
     }
+   
     private void searchwithBoth(LocalDate startDate, LocalDate endDate,String cryptocurrency) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
