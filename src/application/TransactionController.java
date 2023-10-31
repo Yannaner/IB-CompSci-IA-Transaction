@@ -87,9 +87,18 @@ public class TransactionController {
     }
 
     private void showMainScene() {
-        // Data entry panel for adding a new transaction
+        // Data entry 
         Label cryptocurrencyLabel = new Label("Cryptocurrency:");
+        
         cryptocurrencyField = new TextField();
+        // NEED GUI FOR ADDING NEW ELEMENT TO CHOICEBOX
+        String[] CcyList = {"Bitcoin","Dogcoin"};
+        ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
+        //default value for choicebox
+        //CcyChoicebox.setValue("Bitcoin");
+   
+        CcyChoicebox.getItems().addAll(CcyList);
+        
         Label priceLabel = new Label("Price:");
         priceField = new TextField();
         Label marketWorthLabel = new Label("Amount:");
@@ -105,11 +114,11 @@ public class TransactionController {
         importButton.setOnAction(event -> importTransactionsFromCsv());
         
         
-        VBox addTransactionBox = new VBox(10, cryptocurrencyLabel, cryptocurrencyField, priceLabel, priceField,
+        VBox addTransactionBox = new VBox(10, cryptocurrencyLabel, CcyChoicebox, priceLabel, priceField,
                 marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, addButton,importButton);
         addTransactionBox.setPadding(new Insets(10));
 
-        addButton.setOnAction(event -> addTransaction());
+        addButton.setOnAction(event -> addTransaction(CcyChoicebox));
 
         // Page to view and sort all previous transactions by time
         TableColumn<Transaction, String> cryptocurrencyColumn = new TableColumn<>("Cryptocurrency");
@@ -160,6 +169,7 @@ public class TransactionController {
         }else {
         searchButton.setOnAction(event -> searchTransactions(CCYname.getText()));
         }
+        
         //refresh the loading page with refresh button
         refresh.setOnAction(event -> loadTransactions());
 
@@ -192,8 +202,8 @@ public class TransactionController {
         loadTransactions();
     }
     
-    private void addTransaction() {
-    	String cryptocurrency = cryptocurrencyField.getText();
+    private void addTransaction(ChoiceBox<String> CcyChoicebox) {
+    	String cryptocurrency = CcyChoicebox.getValue();
     	double marketWorth = Double.parseDouble(marketWorthField.getText());
     	double price = Double.parseDouble(priceField.getText());
     	String stratsCode = StratsCodeField.getText();
