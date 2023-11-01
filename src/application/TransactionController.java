@@ -90,9 +90,15 @@ public class TransactionController {
         // Data entry 
         Label cryptocurrencyLabel = new Label("Cryptocurrency:");
         
-        cryptocurrencyField = new TextField();
+   
         // NEED GUI FOR ADDING NEW ELEMENT TO CHOICEBOX
+        
+        
+        
         String[] CcyList = {"Bitcoin","Dogcoin"};
+        
+        //need to add GUI here
+        
         ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
         //default value for choicebox
         //CcyChoicebox.setValue("Bitcoin");
