@@ -34,7 +34,7 @@ public class TransactionController {
     private Stage primaryStage;
     private Scene loginScene;
     private Scene mainScene;
-
+    private Scene AddCCYScene;
     private final DatabaseManager databaseManager;
 
     public TransactionController() {
@@ -77,7 +77,7 @@ public class TransactionController {
 		return false;
     }
    
-
+//Alert
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
@@ -95,15 +95,35 @@ public class TransactionController {
         
         
         
-        String[] CcyList = {"Bitcoin","Dogcoin"};
+        ArrayList<String> CcyList = new ArrayList<String>();
         
         //need to add GUI here
         
         ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
+        
         //default value for choicebox
         //CcyChoicebox.setValue("Bitcoin");
    
+       
+        
+        Button AddCcyButton = new Button("Add a New Type of CCY");
+        Label Addccy = new Label("Add a new cryptocurrency type:");
+        TextField Addccytextfield = new TextField();
+        
+        
+        Button AddCcyButton2 = new Button("Add a New Type of CCY");
+        
+        
+        VBox AddCCYBox = new VBox(10, Addccy,Addccytextfield,AddCcyButton2);
+        AddCCYBox.setPadding(new Insets(10));
+        AddCCYScene = new Scene(AddCCYBox, 400, 200);
+        AddCcyButton.setOnAction(event ->  primaryStage.setScene(AddCCYScene));
+        primaryStage.show();
+        AddCcyButton2.setOnAction(event ->  addCCYtype(Addccytextfield.getText()));
+        CcyList = addCCYtype(Addccytextfield.getText());
+        
         CcyChoicebox.getItems().addAll(CcyList);
+        
         
         Label priceLabel = new Label("Price:");
         priceField = new TextField();
@@ -114,6 +134,11 @@ public class TransactionController {
         Button addButton = new Button("Add Transaction");
         Button importButton = new Button("Import");
         
+        
+        
+        
+        
+        
         VBox importBox = new VBox(10, importButton);
         importBox.setPadding(new Insets(10));
 
@@ -121,7 +146,7 @@ public class TransactionController {
         
         
         VBox addTransactionBox = new VBox(10, cryptocurrencyLabel, CcyChoicebox, priceLabel, priceField,
-                marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, addButton,importButton);
+                marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, addButton,importButton , AddCcyButton);
         addTransactionBox.setPadding(new Insets(10));
 
         addButton.setOnAction(event -> addTransaction(CcyChoicebox));
@@ -208,6 +233,14 @@ public class TransactionController {
         loadTransactions();
     }
     
+    private ArrayList<String> addCCYtype(String ccy) {
+    	ArrayList<String> CcyList = new ArrayList<String>();
+    	CcyList.add(ccy);
+    	System.out.println(CcyList);
+    	primaryStage.setScene(mainScene);
+    	return CcyList;
+    	
+    }
     private void addTransaction(ChoiceBox<String> CcyChoicebox) {
     	String cryptocurrency = CcyChoicebox.getValue();
     	double marketWorth = Double.parseDouble(marketWorthField.getText());
