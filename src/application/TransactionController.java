@@ -35,8 +35,10 @@ public class TransactionController {
     private Scene loginScene;
     private Scene mainScene;
     private Scene AddCCYScene;
+    private Scene AddStratsCodeScene;
     private final DatabaseManager databaseManager;
-
+    private ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
+    private ChoiceBox<String> StratscodeChoicebox = new ChoiceBox<>();
     public TransactionController() {
         this.databaseManager = new DatabaseManager();
     }
@@ -89,41 +91,34 @@ public class TransactionController {
     private void showMainScene() {
         // Data entry 
         Label cryptocurrencyLabel = new Label("Cryptocurrency:");
-        
-   
-        // NEED GUI FOR ADDING NEW ELEMENT TO CHOICEBOX
-        
-        
-        
-        ArrayList<String> CcyList = new ArrayList<String>();
-        
-        //need to add GUI here
-        
-        ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
-        
-        //default value for choicebox
-        //CcyChoicebox.setValue("Bitcoin");
-   
-       
-        
+     
+    
         Button AddCcyButton = new Button("Add a New Type of CCY");
         Label Addccy = new Label("Add a new cryptocurrency type:");
         TextField Addccytextfield = new TextField();
-        
-        
         Button AddCcyButton2 = new Button("Add a New Type of CCY");
         
+        Button AddStratscodeButton = new Button("Add a New Type of Stratscode");
+        Label AddStratscode = new Label("Add a new Stratscode: ");
+        TextField AddStratscodefield = new TextField();
+        Button AddStratscode2 = new Button("Add a New Type of Stratscode");
         
+        //Choice box for ccy
         VBox AddCCYBox = new VBox(10, Addccy,Addccytextfield,AddCcyButton2);
         AddCCYBox.setPadding(new Insets(10));
         AddCCYScene = new Scene(AddCCYBox, 400, 200);
         AddCcyButton.setOnAction(event ->  primaryStage.setScene(AddCCYScene));
         primaryStage.show();
         AddCcyButton2.setOnAction(event ->  addCCYtype(Addccytextfield.getText()));
-        CcyList = addCCYtype(Addccytextfield.getText());
         
-        CcyChoicebox.getItems().addAll(CcyList);
+        VBox AddStratscodeBox = new VBox(10, AddStratscode,AddStratscodefield,AddStratscode2);
+        AddStratscodeBox.setPadding(new Insets(10));
+        AddStratsCodeScene = new Scene(AddStratscodeBox, 400, 200);
+        AddStratscodeButton.setOnAction(event ->  primaryStage.setScene(AddStratsCodeScene));
+        primaryStage.show();
+        AddStratscode2.setOnAction(event ->  addStratscodetype(AddStratscodefield.getText()));
         
+        //Choice box for Strats Code
         
         Label priceLabel = new Label("Price:");
         priceField = new TextField();
@@ -146,11 +141,13 @@ public class TransactionController {
         
         
         VBox addTransactionBox = new VBox(10, cryptocurrencyLabel, CcyChoicebox, priceLabel, priceField,
-                marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, addButton,importButton , AddCcyButton);
+                marketWorthLabel, marketWorthField,StratsCodeLabel,StratscodeChoicebox, addButton,importButton , AddCcyButton,AddStratscodeButton);
         addTransactionBox.setPadding(new Insets(10));
 
         addButton.setOnAction(event -> addTransaction(CcyChoicebox));
 
+        
+        
         // Page to view and sort all previous transactions by time
         TableColumn<Transaction, String> cryptocurrencyColumn = new TableColumn<>("Cryptocurrency");
         cryptocurrencyColumn.setPrefWidth(150);
@@ -233,19 +230,19 @@ public class TransactionController {
         loadTransactions();
     }
     
-    private ArrayList<String> addCCYtype(String ccy) {
-    	ArrayList<String> CcyList = new ArrayList<String>();
-    	CcyList.add(ccy);
-    	System.out.println(CcyList);
+    private void addCCYtype(String ccy) {
+    	CcyChoicebox.getItems().add(ccy);
     	primaryStage.setScene(mainScene);
-    	return CcyList;
-    	
+    }
+    private void addStratscodetype(String stratscode) {
+    	StratscodeChoicebox.getItems().add(stratscode);
+    	primaryStage.setScene(mainScene);
     }
     private void addTransaction(ChoiceBox<String> CcyChoicebox) {
     	String cryptocurrency = CcyChoicebox.getValue();
     	double marketWorth = Double.parseDouble(marketWorthField.getText());
     	double price = Double.parseDouble(priceField.getText());
-    	String stratsCode = StratsCodeField.getText();
+    	String stratsCode = StratscodeChoicebox.getValue();
     	Timestamp timestamp = Timestamp.from(Instant.now());
     	//time rn
     	
@@ -255,7 +252,7 @@ public class TransactionController {
     	
     	showAlert("Success", "Transaction added successfully");
     	
-    	cryptocurrencyField.clear();
+    	//cryptocurrencyField.clear();
     	priceField.clear();
     	marketWorthField.clear();
     	StratsCodeField.clear();
