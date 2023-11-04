@@ -69,6 +69,30 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+    public List<Transaction> getTransactionData() {
+        List<Transaction> dataList = new ArrayList<>();
+        String sql = "SELECT price, amount FROM transactions";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                double price = rs.getDouble("price");
+                double amount = rs.getInt("amount");
+                Transaction transaction = new Transaction(price, amount);
+                // Assuming you have setters in your Transaction class
+                transaction.setPrice(price);
+                transaction.setMarketWorth(amount);
+                dataList.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions properly in your application
+        }
+
+        return dataList;
+    }
 
     public List<Transaction> getTransactions() {
         List<Transaction> transactions = new ArrayList<>();

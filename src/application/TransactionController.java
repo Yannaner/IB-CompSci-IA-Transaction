@@ -39,7 +39,9 @@ public class TransactionController {
     private final DatabaseManager databaseManager;
     ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
     ChoiceBox<String> StratscodeChoicebox = new ChoiceBox<>();
-    
+    LineChartAnalyse lca = new LineChartAnalyse();
+    DatabaseManager dbManager = new DatabaseManager();
+    List<Transaction> transactionData = dbManager.getTransactionData();
     
     public TransactionController() {
         this.databaseManager = new DatabaseManager();
@@ -189,10 +191,14 @@ public class TransactionController {
         VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker,CCYLabel,CCYname, searchButton,refresh);
         searchBox.setPadding(new Insets(5));
         
+        //Line Chart Analyse
+       
+        AnalyseButton.setOnAction(event -> lca.displayLineChart(transactionData));
+        
         
         VBox editAndDeleteBox = new VBox(10);
         editAndDeleteBox.setPadding(new Insets(10));
-        editAndDeleteBox.getChildren().addAll(editButton, deleteButton,searchBox,startDatePicker, toLabel, endDatePicker,searchButton);
+        editAndDeleteBox.getChildren().addAll(editButton, deleteButton,searchBox,startDatePicker, toLabel, endDatePicker,searchButton,AnalyseButton);
 
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
@@ -334,7 +340,8 @@ public class TransactionController {
 
                 // Update the transaction in the database
                 databaseManager.updateTransaction(selectedTransaction);
-
+                //update the data for analyse
+                transactionData = dbManager.getTransactionData();
                 editStage.close();
 
                 showAlert("Transaction Updated", "The selected transaction has been updated successfully.");

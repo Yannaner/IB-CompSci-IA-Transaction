@@ -19,6 +19,10 @@ public class Transaction {
         this.transaction_time = currentTimestamp;
         this.stratscode= stratscode;
     }
+    public Transaction(double price, double marketWorth) {
+    	this.price = price;
+    	this.marketWorth=marketWorth;
+    }
 
     public String getStratscode() {
 		return stratscode;
