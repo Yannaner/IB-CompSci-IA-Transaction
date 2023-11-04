@@ -37,8 +37,10 @@ public class TransactionController {
     private Scene AddCCYScene;
     private Scene AddStratsCodeScene;
     private final DatabaseManager databaseManager;
-    private ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
-    private ChoiceBox<String> StratscodeChoicebox = new ChoiceBox<>();
+    ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
+    ChoiceBox<String> StratscodeChoicebox = new ChoiceBox<>();
+    
+    
     public TransactionController() {
         this.databaseManager = new DatabaseManager();
     }
@@ -65,7 +67,9 @@ public class TransactionController {
         });
 
         loginScene = new Scene(loginBox, 400, 200);
-
+        //initialize the item in ccy & stratscode choice box
+        CcyChoicebox.getItems().addAll(FileManager.readCryptoTypes());
+        StratscodeChoicebox.getItems().addAll(FileManager.readStratscodeTypes());
         primaryStage.setScene(loginScene);
         primaryStage.show();
     }
@@ -109,16 +113,24 @@ public class TransactionController {
         AddCCYScene = new Scene(AddCCYBox, 400, 200);
         AddCcyButton.setOnAction(event ->  primaryStage.setScene(AddCCYScene));
         primaryStage.show();
-        AddCcyButton2.setOnAction(event ->  addCCYtype(Addccytextfield.getText()));
+        AddCcyButton2.setOnAction(event ->  {
+        	addCCYtype(Addccytextfield.getText());
+        	Addccytextfield.clear();
+        });
         
+        //Choice box for stratscode
         VBox AddStratscodeBox = new VBox(10, AddStratscode,AddStratscodefield,AddStratscode2);
         AddStratscodeBox.setPadding(new Insets(10));
         AddStratsCodeScene = new Scene(AddStratscodeBox, 400, 200);
         AddStratscodeButton.setOnAction(event ->  primaryStage.setScene(AddStratsCodeScene));
         primaryStage.show();
-        AddStratscode2.setOnAction(event ->  addStratscodetype(AddStratscodefield.getText()));
+        AddStratscode2.setOnAction(event ->  {
+        	addStratscodetype(AddStratscodefield.getText());
+        	AddStratscodefield.clear();
+    });
         
-        //Choice box for Strats Code
+     
+        
         
         Label priceLabel = new Label("Price:");
         priceField = new TextField();
@@ -129,10 +141,7 @@ public class TransactionController {
         Button addButton = new Button("Add Transaction");
         Button importButton = new Button("Import");
         
-        
-        
-        
-        
+      
         
         VBox importBox = new VBox(10, importButton);
         importBox.setPadding(new Insets(10));
@@ -170,6 +179,7 @@ public class TransactionController {
         Button editButton = new Button("Edit Transaction");
         Button deleteButton = new Button("Delete Transaction");
         Button searchButton = new Button("Search");
+        Button AnalyseButton = new Button("Analyse");
         Button refresh = new Button("Refresh");
         DatePicker startDatePicker = new DatePicker();
         Label toLabel = new Label("to");
@@ -187,7 +197,7 @@ public class TransactionController {
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
         
-        //BUG HERE, IT CANT SEARCH
+        //BUG HERE, IT CANT SEARCH with time
         if(CCYname.getText()!=null && startDatePicker.getValue()!=null &&endDatePicker.getValue()!=null) {
         searchButton.setOnAction(event -> searchwithBoth(startDatePicker.getValue(), endDatePicker.getValue(),CCYname.getText()));
         CCYname.clear();
@@ -233,10 +243,12 @@ public class TransactionController {
     private void addCCYtype(String ccy) {
     	CcyChoicebox.getItems().add(ccy);
     	primaryStage.setScene(mainScene);
+    	FileManager.writeCryptoTypes(CcyChoicebox.getItems());
     }
     private void addStratscodetype(String stratscode) {
     	StratscodeChoicebox.getItems().add(stratscode);
     	primaryStage.setScene(mainScene);
+    	FileManager.writeStratscodeTypes(StratscodeChoicebox.getItems());
     }
     private void addTransaction(ChoiceBox<String> CcyChoicebox) {
     	String cryptocurrency = CcyChoicebox.getValue();
