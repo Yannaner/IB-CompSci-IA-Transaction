@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 public class LineChartAnalyse {
@@ -18,10 +19,11 @@ public class LineChartAnalyse {
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Amount");
 
+        ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
+        scatterChart.setTitle("Price vs Amount Analysis");
+        //LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
         
-        LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        
-        lineChart.setTitle("Price vs Amount Analysis");
+        //lineChart.setTitle("Price vs Amount Analysis");
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Data Series");
@@ -29,9 +31,9 @@ public class LineChartAnalyse {
         for (Transaction data : dataList) {
             series.getData().add(new XYChart.Data<>(data.getPrice(), data.getMarketWorth()));
         }
-
-        lineChart.getData().add(series);
-        Scene scene = new Scene(lineChart, 800, 600);
+        scatterChart.getData().add(series);
+        //lineChart.getData().add(series);
+        Scene scene = new Scene(scatterChart, 800, 600);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.show();
