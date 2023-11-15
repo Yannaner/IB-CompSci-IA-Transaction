@@ -3,6 +3,10 @@ package application;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javafx.util.Pair;
+
 import java.sql.Timestamp;
 
 public class DatabaseManager {
@@ -168,4 +172,43 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+    public double calculateStandardDeviation(List<Double> values) {
+        double mean = values.stream().mapToDouble(d -> d).average().orElse(0.0);
+        double variance = values.stream().mapToDouble(d -> (d - mean) * (d - mean)).sum() / values.size();
+        return Math.sqrt(variance);
+    }
+
+    public Pair<Double, Double> getStandardDeviations() {
+        List<Transaction> transactions = getTransactionData();
+        List<Double> prices = transactions.stream().map(Transaction::getPrice).collect(Collectors.toList());
+        List<Double> amounts = transactions.stream().map(Transaction::getMarketWorth).collect(Collectors.toList());
+
+        double priceStdDev = calculateStandardDeviation(prices);
+        double amountStdDev = calculateStandardDeviation(amounts);
+
+        return new Pair<>(priceStdDev, amountStdDev);
+    }
+    public List<Transaction> getBitcoinTransactions() {
+        List<Transaction> dataList = new ArrayList<>();
+        String sql = "SELECT price, amount FROM transactions WHERE cryptocurrency LIKE 'Bitcoin%'";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                double price = rs.getDouble("price");
+                double amount = rs.getDouble("amount");
+                Transaction transaction = new Transaction(price, amount);
+                dataList.add(transaction);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle exceptions properly in your application
+        }
+
+        return dataList;
+    }
+
 }
+

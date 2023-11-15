@@ -40,6 +40,8 @@ public class TransactionController {
     ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
     ChoiceBox<String> StratscodeChoicebox = new ChoiceBox<>();
     LineChartAnalyse lca = new LineChartAnalyse();
+    ScatterChartAnalyse sca = new ScatterChartAnalyse();
+    SDChartAnalyse SDca = new SDChartAnalyse();
     DatabaseManager dbManager = new DatabaseManager();
     List<Transaction> transactionData = dbManager.getTransactionData();
     
@@ -182,23 +184,42 @@ public class TransactionController {
         Button deleteButton = new Button("Delete Transaction");
         Button searchButton = new Button("Search");
         Button AnalyseButton = new Button("Analyse");
+       
+        //Analysis I can do with my datas
+        ChoiceBox<String> AnalyseChoicebox = new ChoiceBox<>();
+        AnalyseChoicebox.getItems().add("LineChartAnalyse");
+        AnalyseChoicebox.getItems().add("ScatterChartAnalyse");
+        AnalyseChoicebox.getItems().add("StandardDeviationChartAnalyse");
+        
+        
         Button refresh = new Button("Refresh");
         DatePicker startDatePicker = new DatePicker();
         Label toLabel = new Label("to");
         DatePicker endDatePicker = new DatePicker();
         Label CCYLabel = new Label("CCY");
         TextField CCYname = new TextField();
+        
         VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker,CCYLabel,CCYname, searchButton,refresh);
         searchBox.setPadding(new Insets(5));
         
-        //Line Chart Analyse
-       
-        AnalyseButton.setOnAction(event -> lca.displayLineChart(transactionData));
+        //Chart Analyse
+        AnalyseChoicebox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                if (newValue.equals("LineChartAnalyse")) {
+                    AnalyseButton.setOnAction(event -> lca.displayLineChart(transactionData));
+                } else if (newValue.equals("ScatterChartAnalyse")) {
+                    AnalyseButton.setOnAction(event -> sca.displayScatterChart(transactionData));
+                } else if (newValue.equals("StandardDeviationChartAnalyse")) {
+                	AnalyseButton.setOnAction(event -> SDca.displayStandardDeviationChart(dbManager));
+                }
+            }
+        });
+        
         
         
         VBox editAndDeleteBox = new VBox(10);
         editAndDeleteBox.setPadding(new Insets(10));
-        editAndDeleteBox.getChildren().addAll(editButton, deleteButton,searchBox,startDatePicker, toLabel, endDatePicker,searchButton,AnalyseButton);
+        editAndDeleteBox.getChildren().addAll(editButton, deleteButton,searchBox,startDatePicker, toLabel, endDatePicker,searchButton,AnalyseButton,AnalyseChoicebox);
 
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
