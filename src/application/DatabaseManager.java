@@ -192,7 +192,7 @@ public class DatabaseManager {
         List<Transaction> dataList = new ArrayList<>();
        
         String sql = "SELECT price, amount FROM transactions";
-
+        // WHERE cryptocurrency LIKE 'Bitcoin%'
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
