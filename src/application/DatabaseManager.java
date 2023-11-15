@@ -188,9 +188,10 @@ public class DatabaseManager {
 
         return new Pair<>(priceStdDev, amountStdDev);
     }
-    public List<Transaction> getBitcoinTransactions() {
+    public List<Transaction> getCCYTransactions() {
         List<Transaction> dataList = new ArrayList<>();
-        String sql = "SELECT price, amount FROM transactions WHERE cryptocurrency LIKE 'Bitcoin%'";
+       
+        String sql = "SELECT price, amount FROM transactions";
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -204,7 +205,6 @@ public class DatabaseManager {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exceptions properly in your application
         }
 
         return dataList;
