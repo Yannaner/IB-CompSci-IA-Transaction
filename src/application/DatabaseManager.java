@@ -14,6 +14,8 @@ public class DatabaseManager {
     private final String DB_USERNAME = "root";
     private final String DB_PASSWORD = "@S08jj123lol";
 
+    
+    //Credentials that need to change into clients credentials when implement
     public void createDatabase() {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306", DB_USERNAME, DB_PASSWORD)) {
             String query = "CREATE DATABASE IF NOT EXISTS transaction_db";
@@ -24,6 +26,7 @@ public class DatabaseManager {
         }
     }
 
+    //MySQL language
     public void createTransactionTable() {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
             // Create the database if it doesn't exist
@@ -47,7 +50,7 @@ public class DatabaseManager {
             PreparedStatement checkColumnStatement = connection.prepareStatement(checkColumnQuery);
             ResultSet resultSet = checkColumnStatement.executeQuery();
 
-            // This if method can be since the time is added, modify for later use
+          
             if (!resultSet.next()) {
                 String alterTableQuery = "ALTER TABLE transactions ADD COLUMN transaction_time TIMESTAMP";
                 PreparedStatement alterTableStatement = connection.prepareStatement(alterTableQuery);
@@ -66,17 +69,17 @@ public class DatabaseManager {
             statement.setDouble(2, price);
             statement.setDouble(3, amount);
             statement.setString(4, stratsCode);
-            statement.setTimestamp(5, timestamp); // Set timestamp
-
+            statement.setTimestamp(5, timestamp); 
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+    
     public List<Transaction> getTransactionData() {
         List<Transaction> dataList = new ArrayList<>();
         String sql = "SELECT price, amount FROM transactions";
-
+        //Try and Catch
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
@@ -85,14 +88,13 @@ public class DatabaseManager {
                 double price = rs.getDouble("price");
                 double amount = rs.getInt("amount");
                 Transaction transaction = new Transaction(price, amount);
-                // Assuming you have setters in your Transaction class
                 transaction.setPrice(price);
                 transaction.setAmount(amount);
                 dataList.add(transaction);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle exceptions properly in your application
+
         }
 
         return dataList;
