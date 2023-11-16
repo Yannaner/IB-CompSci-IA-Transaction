@@ -1,5 +1,6 @@
 package application;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -199,8 +200,21 @@ public class TransactionController {
         DatePicker endDatePicker = new DatePicker();
         Label CCYLabel = new Label("CCY");
         TextField CCYname = new TextField();
+        ChoiceBox<String> nameOrStrats = new ChoiceBox<String>();
+        ChoiceBox<String> nameOrStratsField = new ChoiceBox<String>();
         
-        VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker,CCYLabel,CCYname, searchButton,refresh);
+        nameOrStrats.getItems().add("Cryptocurrency");
+        nameOrStrats.getItems().add("Stratscode");
+        nameOrStrats.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            nameOrStratsField.getItems().clear();
+            if ("Cryptocurrency".equals(newValue)) {
+                nameOrStratsField.getItems().addAll(FileManager.readCryptoTypes());
+            } else if ("Stratscode".equals(newValue)) {
+                nameOrStratsField.getItems().addAll(FileManager.readStratscodeTypes());
+            }
+        });
+        
+        VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker,CCYLabel,nameOrStrats,nameOrStratsField, searchButton,refresh);
         searchBox.setPadding(new Insets(5));
         
         //Chart Analyse
@@ -227,17 +241,29 @@ public class TransactionController {
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
         
-        //BUG HERE, IT CANT SEARCH with time
-        if(CCYname.getText()!=null && startDatePicker.getValue()!=null &&endDatePicker.getValue()!=null) {
-        searchButton.setOnAction(event -> searchwithBoth(startDatePicker.getValue(), endDatePicker.getValue(),CCYname.getText()));
-        CCYname.clear();
-        }else if(CCYname.getText()==null){
-        searchButton.setOnAction(event -> searchTransactions(startDatePicker.getValue(), endDatePicker.getValue()));    
+
         
-        }else {
-        searchButton.setOnAction(event -> searchTransactions(CCYname.getText()));
-        }
-        
+        ChangeListener<Object> ListenerForSearch = (observable, oldValue, newValue) -> {
+            if (nameOrStratsField.getValue() != null && !nameOrStratsField.getValue().isEmpty() 
+                && startDatePicker.getValue() != null && endDatePicker.getValue() != null) {
+                System.out.println("Searching with both name and date");
+                searchButton.setOnAction(event -> searchwithBoth(startDatePicker.getValue(), endDatePicker.getValue(), nameOrStratsField.getValue()));
+            } else if (startDatePicker.getValue() != null && endDatePicker.getValue() != null) {
+                System.out.println("Searching with date only");
+                searchButton.setOnAction(event -> searchTransactions(startDatePicker.getValue(), endDatePicker.getValue()));
+            } else if (nameOrStratsField.getValue() != null && !nameOrStratsField.getValue().isEmpty()) {
+                System.out.println("Searching with name or stratscode only");
+                searchButton.setOnAction(event -> searchTransactions(nameOrStratsField.getValue()));
+            }
+        };
+
+        nameOrStratsField.getSelectionModel().selectedItemProperty().addListener(ListenerForSearch);
+        startDatePicker.valueProperty().addListener(ListenerForSearch);
+        endDatePicker.valueProperty().addListener(ListenerForSearch);
+
+
+      
+
         //refresh the loading page with refresh button
         refresh.setOnAction(event -> loadTransactions());
 
@@ -392,7 +418,7 @@ public class TransactionController {
             showAlert("No Transaction Selected", "Please select a transaction to edit.");
         }
     }
-
+    
     private void searchTransactions(LocalDate startDate, LocalDate endDate) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
@@ -405,17 +431,18 @@ public class TransactionController {
 
         transactionTable.setItems(filteredTransactions);
     }
-    private void searchTransactions(String cryptocurrency) {
+    private void searchTransactions(String ccyOrStrat) {
     	ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
         for (Transaction transaction : transactionTable.getItems()) {
-            if (transaction.getCryptocurrency().equalsIgnoreCase(cryptocurrency)) {
+            if (transaction.getCryptocurrency().equalsIgnoreCase(ccyOrStrat) ||transaction.getStratscode().equalsIgnoreCase(ccyOrStrat)) {
                 filteredTransactions.add(transaction);
             }
         }
-
         transactionTable.setItems(filteredTransactions);
+        
     }
+ 
    
     private void searchwithBoth(LocalDate startDate, LocalDate endDate,String cryptocurrency) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
