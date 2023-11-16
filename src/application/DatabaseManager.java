@@ -209,6 +209,25 @@ public class DatabaseManager {
 
         return dataList;
     }
+    public List<Pair<Double, Double>> getPriceAndAmountData() {
+        List<Pair<Double, Double>> data = new ArrayList<>();
+        String sql = "SELECT price, amount FROM transactions"; 
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                double price = rs.getDouble("price");
+                double amount = rs.getDouble("amount"); 
+                data.add(new Pair<>(amount, price));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return data;
+    }
 
 }
 

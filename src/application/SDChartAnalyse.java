@@ -27,7 +27,7 @@ public class SDChartAnalyse {
         scatterChart.setTitle("Bitcoin Standard Deviation Analysis");
 
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
-        series.setName("Bitcoin Data Series");
+        series.setName("Transsaction Standard Deviation");
         
         for (int i = 0; i < bitcoinTransactions.size(); i++) {
         	

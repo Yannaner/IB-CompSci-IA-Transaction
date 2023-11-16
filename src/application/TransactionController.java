@@ -42,6 +42,7 @@ public class TransactionController {
     LineChartAnalyse lca = new LineChartAnalyse();
     ScatterChartAnalyse sca = new ScatterChartAnalyse();
     SDChartAnalyse SDca = new SDChartAnalyse();
+    LinearRegressionAnalyse lra = new LinearRegressionAnalyse();
     DatabaseManager dbManager = new DatabaseManager();
     List<Transaction> transactionData = dbManager.getTransactionData();
     
@@ -190,7 +191,7 @@ public class TransactionController {
         AnalyseChoicebox.getItems().add("LineChartAnalyse");
         AnalyseChoicebox.getItems().add("ScatterChartAnalyse");
         AnalyseChoicebox.getItems().add("StandardDeviationChartAnalyse");
-        
+        AnalyseChoicebox.getItems().add("LinearRegressionAnalyse");
         
         Button refresh = new Button("Refresh");
         DatePicker startDatePicker = new DatePicker();
@@ -211,6 +212,8 @@ public class TransactionController {
                     AnalyseButton.setOnAction(event -> sca.displayScatterChart(transactionData));
                 } else if (newValue.equals("StandardDeviationChartAnalyse")) {
                 	AnalyseButton.setOnAction(event -> SDca.displayStandardDeviationChart(dbManager));
+                }else if (newValue.equals("LinearRegressionAnalyse")) {
+                	AnalyseButton.setOnAction(event -> lra.displayLinearRegressionChart(dbManager));
                 }
             }
         });
@@ -316,14 +319,19 @@ public class TransactionController {
     	priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
     	marketWorthColumn.setCellValueFactory(new PropertyValueFactory<>("marketWorth"));
     	stratsCodeColumn.setCellValueFactory(new PropertyValueFactory<>("stratscode"));
+    	
     	timestampColumn.setCellValueFactory(cellData -> {
     		Timestamp timestamp = cellData.getValue().getTimestamp();
+   
     		if(timestamp == null) {
+//    			Timestamp curr = new Timestamp(System.currentTimeMillis());
+//    			String formattedTimestamp = curr.toString();
     			return new ReadOnlyStringWrapper("Unknown");
     		}else {
     		String formattedTimestamp = timestamp.toString();
     		return new ReadOnlyStringWrapper(formattedTimestamp);
     		}
+    
     	});
     } 
 
@@ -462,21 +470,21 @@ public class TransactionController {
         try (CSVReader reader = new CSVReaderBuilder(new FileReader(file)).withSkipLines(0).build()) {
             String[] line;
             while ((line = reader.readNext()) != null) {
-                if (line.length == 3) {
+                if (line.length == 5) {
                     String cryptocurrency = line[0];
                     double price = Double.parseDouble(line[1]);
-                    double marketWorth = Double.parseDouble(line[2]);
+                    double amount = Double.parseDouble(line[2]);
                     String stratsCode = line[3];
                     String time = line[4];
-                    Timestamp Currenttime = Timestamp.valueOf(time);
-                    if(time==null) {
-                    	Currenttime = new Timestamp(System.currentTimeMillis());
+                    Timestamp timestamp = null;
 
+                    if (time != null && !time.isEmpty()) {
+                    	timestamp = Timestamp.valueOf(time);
                     }
-                    
-                    Transaction transaction = new Transaction(0, cryptocurrency, price, marketWorth, stratsCode, Currenttime);
+                 
+                    Transaction transaction = new Transaction(0, cryptocurrency, price, amount, stratsCode, timestamp);
                     transactions.add(transaction);
-                }
+                } 
             }
         } catch (IOException | CsvException e) {
             e.printStackTrace();
