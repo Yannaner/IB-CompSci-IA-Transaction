@@ -6,22 +6,22 @@ public class Transaction {
     private int id;
     private String cryptocurrency;
     private double price;
-    private double marketWorth;
+    private double amount;
     private Timestamp transaction_time;
     private String stratscode;
     
     
-    public Transaction(int id, String cryptocurrency, double price, double marketWorth,String stratscode, Timestamp currentTimestamp) {
+    public Transaction(int id, String cryptocurrency, double price, double amount,String stratscode, Timestamp currentTimestamp) {
         this.id = id;
         this.cryptocurrency = cryptocurrency;
         this.price = price;
-        this.marketWorth = marketWorth;
+        this.amount=amount;
         this.transaction_time = currentTimestamp;
         this.stratscode= stratscode;
     }
-    public Transaction(double price, double marketWorth) {
+    public Transaction(double price, double amount) {
     	this.price = price;
-    	this.marketWorth=marketWorth;
+    	this.amount = amount;
     }
 
     public String getStratscode() {
@@ -54,12 +54,12 @@ public class Transaction {
         this.price = price;
     }
 
-    public double getMarketWorth() {
-        return marketWorth;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setMarketWorth(double marketWorth) {
-        this.marketWorth = marketWorth;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
     public Timestamp getTimestamp() {
         return transaction_time;

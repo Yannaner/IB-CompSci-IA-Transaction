@@ -23,7 +23,7 @@ public class LinearRegression {
             sumXY += point.getKey() * point.getValue();
             sumXX += point.getKey() * point.getKey();
         }
-
+        //Math
         slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
         intercept = (sumY - slope * sumX) / n;
     }

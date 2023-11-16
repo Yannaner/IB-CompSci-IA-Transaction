@@ -87,7 +87,7 @@ public class DatabaseManager {
                 Transaction transaction = new Transaction(price, amount);
                 // Assuming you have setters in your Transaction class
                 transaction.setPrice(price);
-                transaction.setMarketWorth(amount);
+                transaction.setAmount(amount);
                 dataList.add(transaction);
             }
         } catch (SQLException e) {
@@ -130,7 +130,7 @@ public class DatabaseManager {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, transaction.getCryptocurrency());
             statement.setDouble(2, transaction.getPrice());
-            statement.setDouble(3, transaction.getMarketWorth());
+            statement.setDouble(3, transaction.getAmount());
             statement.setString(4, transaction.getStratscode());
             statement.setInt(5, transaction.getId());
             statement.executeUpdate();
@@ -158,7 +158,7 @@ public class DatabaseManager {
             for (Transaction transaction : transactions) {
                 statement.setString(1, transaction.getCryptocurrency());
                 statement.setDouble(2, transaction.getPrice());
-                statement.setDouble(3, transaction.getMarketWorth());
+                statement.setDouble(3, transaction.getAmount());
                 statement.setString(4, transaction.getStratscode());
                 statement.executeUpdate();
 
@@ -181,7 +181,7 @@ public class DatabaseManager {
     public Pair<Double, Double> getStandardDeviations() {
         List<Transaction> transactions = getTransactionData();
         List<Double> prices = transactions.stream().map(Transaction::getPrice).collect(Collectors.toList());
-        List<Double> amounts = transactions.stream().map(Transaction::getMarketWorth).collect(Collectors.toList());
+        List<Double> amounts = transactions.stream().map(Transaction::getAmount).collect(Collectors.toList());
 
         double priceStdDev = calculateStandardDeviation(prices);
         double amountStdDev = calculateStandardDeviation(amounts);
@@ -192,7 +192,6 @@ public class DatabaseManager {
         List<Transaction> dataList = new ArrayList<>();
        
         String sql = "SELECT price, amount FROM transactions";
-        // WHERE cryptocurrency LIKE 'Bitcoin%'
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {

@@ -1,9 +1,9 @@
 package application;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,8 @@ import com.opencsv.exceptions.CsvException;
 
 public class TransactionController {
     private TableView<Transaction> transactionTable;
-    private TextField cryptocurrencyField;
     private TextField priceField;
-    private TextField marketWorthField;
+    private TextField amountField;
     private TextField StratsCodeField;
 
     private Stage primaryStage;
@@ -73,7 +71,7 @@ public class TransactionController {
         });
 
         loginScene = new Scene(loginBox, 400, 200);
-        //initialize the item in ccy & stratscode choice box
+        //initialize the item in ccy + stratscode choice box
         CcyChoicebox.getItems().addAll(FileManager.readCryptoTypes());
         StratscodeChoicebox.getItems().addAll(FileManager.readStratscodeTypes());
         primaryStage.setScene(loginScene);
@@ -89,13 +87,14 @@ public class TransactionController {
 		return false;
     }
    
-//Alert
+
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+        //alert method
     }
 
     private void showMainScene() {
@@ -116,7 +115,7 @@ public class TransactionController {
         //Choice box for ccy
         VBox AddCCYBox = new VBox(10, Addccy,Addccytextfield,AddCcyButton2);
         AddCCYBox.setPadding(new Insets(10));
-        AddCCYScene = new Scene(AddCCYBox, 400, 200);
+        AddCCYScene = new Scene(AddCCYBox, 350, 150);
         AddCcyButton.setOnAction(event ->  primaryStage.setScene(AddCCYScene));
         primaryStage.show();
         AddCcyButton2.setOnAction(event ->  {
@@ -127,7 +126,7 @@ public class TransactionController {
         //Choice box for stratscode
         VBox AddStratscodeBox = new VBox(10, AddStratscode,AddStratscodefield,AddStratscode2);
         AddStratscodeBox.setPadding(new Insets(10));
-        AddStratsCodeScene = new Scene(AddStratscodeBox, 400, 200);
+        AddStratsCodeScene = new Scene(AddStratscodeBox, 350, 150);
         AddStratscodeButton.setOnAction(event ->  primaryStage.setScene(AddStratsCodeScene));
         primaryStage.show();
         AddStratscode2.setOnAction(event ->  {
@@ -140,25 +139,39 @@ public class TransactionController {
         
         Label priceLabel = new Label("Price:");
         priceField = new TextField();
-        Label marketWorthLabel = new Label("Amount:");
-        marketWorthField = new TextField();
+        Label amountLabel = new Label("Amount:");
+        amountField = new TextField();
         Label StratsCodeLabel = new Label("Strats Code:");
         StratsCodeField = new TextField();
         Button addButton = new Button("Add Transaction");
         Button importButton = new Button("Import");
-        
-      
-        
         VBox importBox = new VBox(10, importButton);
         importBox.setPadding(new Insets(10));
 
+      
+        //GUI layout
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        grid.add(cryptocurrencyLabel, 0, 0);
+        grid.add(CcyChoicebox, 1, 0);
+        grid.add(AddCcyButton, 2, 0);
+        grid.add(priceLabel, 0, 1);
+        grid.add(priceField, 1, 1);
+        grid.add(amountLabel, 0, 2);
+        grid.add(amountField, 1, 2);
+        grid.add(StratsCodeLabel, 0, 3);
+        grid.add(StratscodeChoicebox, 1, 3);
+        grid.add(AddStratscodeButton, 2, 3);
+        grid.add(addButton, 1, 4);
+        HBox ImportButton = new HBox(10);
+        ImportButton.setAlignment(Pos.BOTTOM_LEFT);
+        ImportButton.getChildren().add(importButton);
+        grid.add(ImportButton, 1, 5);
+        
         importButton.setOnAction(event -> importTransactionsFromCsv());
-        
-        
-        VBox addTransactionBox = new VBox(10, cryptocurrencyLabel, CcyChoicebox, priceLabel, priceField,
-                marketWorthLabel, marketWorthField,StratsCodeLabel,StratscodeChoicebox, addButton,importButton , AddCcyButton,AddStratscodeButton);
-        addTransactionBox.setPadding(new Insets(10));
-
         addButton.setOnAction(event -> addTransaction(CcyChoicebox));
 
         
@@ -168,17 +181,17 @@ public class TransactionController {
         cryptocurrencyColumn.setPrefWidth(150);
         TableColumn<Transaction, Double> priceColumn = new TableColumn<>("Price");
         priceColumn.setPrefWidth(150);
-        TableColumn<Transaction, Double> marketWorthColumn = new TableColumn<>("Amount");
-        marketWorthColumn.setPrefWidth(150);
+        TableColumn<Transaction, Double> amountColumn = new TableColumn<>("Amount");
+        amountColumn.setPrefWidth(150);
         TableColumn<Transaction, Double> stratsCodeColumn = new TableColumn<>("Strats Code");
-        marketWorthColumn.setPrefWidth(150);
+        amountColumn.setPrefWidth(150);
         TableColumn<Transaction, Timestamp> timestampColumn = new TableColumn<>("Time");
         timestampColumn.setPrefWidth(150);
 
         
         transactionTable = new TableView<>();
-        transactionTable.getColumns().addAll(cryptocurrencyColumn, priceColumn, marketWorthColumn,stratsCodeColumn,timestampColumn);
-        VBox transactionTableBox = new VBox(10, transactionTable);
+        transactionTable.getColumns().addAll(cryptocurrencyColumn, priceColumn, amountColumn,stratsCodeColumn,timestampColumn);
+        VBox transactionTableBox = new VBox(20, transactionTable);
         transactionTableBox.setPadding(new Insets(10));
 
         // Data entry panel for editing and deleting previous transactions
@@ -186,22 +199,47 @@ public class TransactionController {
         Button deleteButton = new Button("Delete Transaction");
         Button searchButton = new Button("Search");
         Button AnalyseButton = new Button("Analyse");
-       
-        //Analysis I can do with my datas
+        Button refresh = new Button("Refresh Table");
+        DatePicker startDatePicker = new DatePicker();
+        Label toLabel = new Label("to");
+        DatePicker endDatePicker = new DatePicker();
+        Label CCYLabel = new Label("Trend Analysis Type");
+        Label nameOrStratsLabel = new Label("Selecte the type");
+        ChoiceBox<String> nameOrStrats = new ChoiceBox<String>();
+        ChoiceBox<String> nameOrStratsField = new ChoiceBox<String>();
+        
+        //GUI
+        BorderPane borderPane = new BorderPane();
+        HBox topButtons = new HBox(10, editButton, deleteButton, refresh);
+        topButtons.setAlignment(Pos.CENTER_LEFT);
+        topButtons.setPadding(new Insets(10));
+        HBox searchArea = new HBox(10, nameOrStratsLabel, nameOrStrats, nameOrStratsField, searchButton);
+        searchArea.setAlignment(Pos.CENTER_LEFT);
+        searchArea.setPadding(new Insets(10));
+        
+        
+      //Analysis I can do with my datas
         ChoiceBox<String> AnalyseChoicebox = new ChoiceBox<>();
         AnalyseChoicebox.getItems().add("LineChartAnalyse");
         AnalyseChoicebox.getItems().add("ScatterChartAnalyse");
         AnalyseChoicebox.getItems().add("StandardDeviationChartAnalyse");
         AnalyseChoicebox.getItems().add("LinearRegressionAnalyse");
         
-        Button refresh = new Button("Refresh");
-        DatePicker startDatePicker = new DatePicker();
-        Label toLabel = new Label("to");
-        DatePicker endDatePicker = new DatePicker();
-        Label CCYLabel = new Label("CCY");
-        TextField CCYname = new TextField();
-        ChoiceBox<String> nameOrStrats = new ChoiceBox<String>();
-        ChoiceBox<String> nameOrStratsField = new ChoiceBox<String>();
+        //GUI
+        HBox bottomAnalysis = new HBox(10, CCYLabel, AnalyseChoicebox, AnalyseButton);
+        bottomAnalysis.setAlignment(Pos.CENTER_LEFT);
+        bottomAnalysis.setPadding(new Insets(10));
+        HBox datePickers = new HBox(10, startDatePicker, toLabel, endDatePicker);
+        datePickers.setAlignment(Pos.CENTER_LEFT);
+        datePickers.setPadding(new Insets(10));
+        
+        VBox topSection = new VBox(5, topButtons);
+        VBox bottomSection = new VBox(5, datePickers,searchArea, bottomAnalysis);
+        borderPane.setTop(topSection);
+        borderPane.setCenter(transactionTableBox);
+        borderPane.setBottom(bottomSection);
+     
+        
         
         nameOrStrats.getItems().add("Cryptocurrency");
         nameOrStrats.getItems().add("Stratscode");
@@ -213,9 +251,6 @@ public class TransactionController {
                 nameOrStratsField.getItems().addAll(FileManager.readStratscodeTypes());
             }
         });
-        
-        VBox searchBox = new VBox(10, startDatePicker, toLabel, endDatePicker,CCYLabel,nameOrStrats,nameOrStratsField, searchButton,refresh);
-        searchBox.setPadding(new Insets(5));
         
         //Chart Analyse
         AnalyseChoicebox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -231,13 +266,7 @@ public class TransactionController {
                 }
             }
         });
-        
-        
-        
-        VBox editAndDeleteBox = new VBox(10);
-        editAndDeleteBox.setPadding(new Insets(10));
-        editAndDeleteBox.getChildren().addAll(editButton, deleteButton,searchBox,startDatePicker, toLabel, endDatePicker,searchButton,AnalyseButton,AnalyseChoicebox);
-
+   
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
         
@@ -271,10 +300,10 @@ public class TransactionController {
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
         Tab addTransactionTab = new Tab("Add Transaction");
-        addTransactionTab.setContent(addTransactionBox);
-
+        addTransactionTab.setContent(grid);
+       
         Tab viewTransactionsTab = new Tab("View Transactions");
-        viewTransactionsTab.setContent(new VBox(transactionTableBox, editAndDeleteBox));
+        viewTransactionsTab.setContent(borderPane);
 
         viewTransactionsTab.setOnSelectionChanged(event -> {
             if (viewTransactionsTab.isSelected()) {
@@ -287,7 +316,7 @@ public class TransactionController {
 
         VBox mainLayout = new VBox(tabPane);
 
-        mainScene = new Scene(mainLayout, 800, 600);
+        mainScene = new Scene(mainLayout, 700, 600);
         primaryStage.setScene(mainScene);
 
        
@@ -308,21 +337,20 @@ public class TransactionController {
     }
     private void addTransaction(ChoiceBox<String> CcyChoicebox) {
     	String cryptocurrency = CcyChoicebox.getValue();
-    	double marketWorth = Double.parseDouble(marketWorthField.getText());
+    	double amount = Double.parseDouble(amountField.getText());
     	double price = Double.parseDouble(priceField.getText());
     	String stratsCode = StratscodeChoicebox.getValue();
     	Timestamp timestamp = Timestamp.from(Instant.now());
     	//time rn
     	
     	//adding transaction to the database
-    	databaseManager.addTransaction(cryptocurrency, price, marketWorth,stratsCode, timestamp);
+    	databaseManager.addTransaction(cryptocurrency, price, amount,stratsCode, timestamp);
     	
     	
     	showAlert("Success", "Transaction added successfully");
     	
-    	//cryptocurrencyField.clear();
     	priceField.clear();
-    	marketWorthField.clear();
+    	amountField.clear();
     	StratsCodeField.clear();
     }
     
@@ -337,21 +365,19 @@ public class TransactionController {
     	
     	TableColumn<Transaction, String> cryptocurrencyColumn = (TableColumn<Transaction, String>) transactionTable.getColumns().get(0);
     	TableColumn<Transaction, Double> priceColumn = (TableColumn<Transaction, Double>) transactionTable.getColumns().get(1);
-    	TableColumn<Transaction, Double> marketWorthColumn = (TableColumn<Transaction, Double>) transactionTable.getColumns().get(2);
+    	TableColumn<Transaction, Double> amountColumn = (TableColumn<Transaction, Double>) transactionTable.getColumns().get(2);
     	TableColumn<Transaction, String> stratsCodeColumn = (TableColumn<Transaction, String>) transactionTable.getColumns().get(3);
     	TableColumn<Transaction, String> timestampColumn = (TableColumn<Transaction, String>) transactionTable.getColumns().get(4);
     	
     	cryptocurrencyColumn.setCellValueFactory(new PropertyValueFactory<>("cryptocurrency"));
     	priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
-    	marketWorthColumn.setCellValueFactory(new PropertyValueFactory<>("marketWorth"));
+    	amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
     	stratsCodeColumn.setCellValueFactory(new PropertyValueFactory<>("stratscode"));
     	
     	timestampColumn.setCellValueFactory(cellData -> {
     		Timestamp timestamp = cellData.getValue().getTimestamp();
    
     		if(timestamp == null) {
-//    			Timestamp curr = new Timestamp(System.currentTimeMillis());
-//    			String formattedTimestamp = curr.toString();
     			return new ReadOnlyStringWrapper("Unknown");
     		}else {
     		String formattedTimestamp = timestamp.toString();
@@ -369,25 +395,23 @@ public class TransactionController {
 
             // Create the data input fields for updated values
             Label cryptocurrencyLabel = new Label("Cryptocurrency:");
-            TextField cryptocurrencyField = new TextField(selectedTransaction.getCryptocurrency());
             Label priceLabel = new Label("Price:");
             TextField priceField = new TextField(String.valueOf(selectedTransaction.getPrice()));
-            Label marketWorthLabel = new Label("Amount:");
-            TextField marketWorthField = new TextField(String.valueOf(selectedTransaction.getMarketWorth()));
+            Label amountLabel = new Label("Amount:");
+            TextField amountField = new TextField(String.valueOf(selectedTransaction.getAmount()));
             Label StratsCodeLabel = new Label("StratsCode:");
-            TextField StratsCodeField = new TextField(String.valueOf(selectedTransaction.getStratscode()));
             Button saveButton = new Button("Save");
             Button cancelButton = new Button("Cancel");
 
             saveButton.setOnAction(event -> {
-                String updatedCryptocurrency = cryptocurrencyField.getText();
+                String updatedCryptocurrency = CcyChoicebox.getValue();
                 double updatedPrice = Double.parseDouble(priceField.getText());
-                double updatedMarketWorth = Double.parseDouble(marketWorthField.getText());
-                String updatedStratsCode= StratsCodeField.getText();
+                double updatedamount = Double.parseDouble(amountField.getText());
+                String updatedStratsCode= StratscodeChoicebox.getValue();
                 // Update the selected transaction
                 selectedTransaction.setCryptocurrency(updatedCryptocurrency);
                 selectedTransaction.setPrice(updatedPrice);
-                selectedTransaction.setMarketWorth(updatedMarketWorth);
+                selectedTransaction.setAmount(updatedamount);
                 selectedTransaction.setStratscode(updatedStratsCode);
 
                 // Refresh the table view
@@ -407,7 +431,7 @@ public class TransactionController {
             HBox buttonBox = new HBox(10, saveButton, cancelButton);
             buttonBox.setPadding(new Insets(10));
 
-            VBox editLayout = new VBox(10, cryptocurrencyLabel, cryptocurrencyField, priceLabel, priceField, marketWorthLabel, marketWorthField,StratsCodeLabel,StratsCodeField, buttonBox);
+            VBox editLayout = new VBox(10, cryptocurrencyLabel, CcyChoicebox, priceLabel, priceField, amountLabel, amountField,StratsCodeLabel,StratscodeChoicebox, buttonBox);
             editLayout.setPadding(new Insets(10));
 
             Scene editScene = new Scene(editLayout);

@@ -38,7 +38,7 @@ public class SDChartAnalyse {
 
             List<Double> amountsUpToCurrent = bitcoinTransactions.stream()
                 .limit(i + 1)
-                .map(Transaction::getMarketWorth)
+                .map(Transaction::getAmount)
                 .collect(Collectors.toList());
 
             double priceStdDev = dbManager.calculateStandardDeviation(pricesUpToCurrent);

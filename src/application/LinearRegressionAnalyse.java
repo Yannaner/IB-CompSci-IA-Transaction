@@ -48,7 +48,7 @@ public class LinearRegressionAnalyse {
         
         scatterChart.getData().add(series);
         scatterChart.getData().add(regressionLineSeries);
-        // Displaying the linear equation
+        //linear equation
         String equation = String.format("y = %.2fx + %.2f", lr.getSlope(), lr.getIntercept());
         scatterChart.setTitle("Linear Regression: " + equation);
 

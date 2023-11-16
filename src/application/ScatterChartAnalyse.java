@@ -26,7 +26,7 @@ public class ScatterChartAnalyse {
         series.setName("Data Series");
 
         for (Transaction data : dataList) {
-            series.getData().add(new XYChart.Data<>(data.getPrice(), data.getMarketWorth()));
+            series.getData().add(new XYChart.Data<>(data.getPrice(), data.getAmount()));
         }
         
        
