@@ -26,6 +26,9 @@ public class LinearRegressionAnalyse {
         ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
         scatterChart.setTitle("Linear Regression Analysis");
 
+        XYChart.Series<Number, Number> regressionLineSeries = new XYChart.Series<>();
+        regressionLineSeries.setName("Regression Line");
+        
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Transaction Data");
 
@@ -36,8 +39,15 @@ public class LinearRegressionAnalyse {
             series.getData().add(new XYChart.Data<>(point.getKey(), point.getValue()));
         }
 
+        double minX = xAxis.getLowerBound();
+        double maxX = xAxis.getUpperBound();
+        for (double x = minX; x <= maxX; x += (maxX - minX) / 100) {
+            double y = lr.getSlope() * x + lr.getIntercept();
+            regressionLineSeries.getData().add(new XYChart.Data<>(x, y));
+        }
+        
         scatterChart.getData().add(series);
-
+        scatterChart.getData().add(regressionLineSeries);
         // Displaying the linear equation
         String equation = String.format("y = %.2fx + %.2f", lr.getSlope(), lr.getIntercept());
         scatterChart.setTitle("Linear Regression: " + equation);
