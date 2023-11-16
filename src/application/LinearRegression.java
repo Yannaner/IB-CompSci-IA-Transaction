@@ -12,7 +12,8 @@ public class LinearRegression {
     public LinearRegression(List<Pair<Double, Double>> data) {
         this.data = data;
     }
-
+    
+    //bascially calculating the slope
     public void fit() {
         double sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
         int n = data.size();

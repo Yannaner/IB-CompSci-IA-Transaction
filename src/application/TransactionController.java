@@ -3,8 +3,10 @@ package application;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -56,7 +58,10 @@ public class TransactionController {
 
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-
+       
+        
+        
+        
         primaryStage.setTitle("Transaction Program");
         Label usernameLabel = new Label("Username:");
         TextField usernameField = new TextField();
@@ -76,6 +81,9 @@ public class TransactionController {
         });
 
         loginScene = new Scene(loginBox, 400, 200);
+        
+        loginScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+        
         //initialize the item in CCY + Stratscode choice box
         CcyChoicebox.getItems().addAll(FileManager.readCryptoTypes());
         StratscodeChoicebox.getItems().addAll(FileManager.readStratscodeTypes());
@@ -120,6 +128,7 @@ public class TransactionController {
         VBox AddCCYBox = new VBox(10, Addccy,Addccytextfield,AddCcyButton2);
         AddCCYBox.setPadding(new Insets(10));
         AddCCYScene = new Scene(AddCCYBox, 350, 150);
+        AddCCYScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         AddCcyButton.setOnAction(event ->  primaryStage.setScene(AddCCYScene));
         primaryStage.show();
         AddCcyButton2.setOnAction(event ->  {
@@ -131,6 +140,7 @@ public class TransactionController {
         VBox AddStratscodeBox = new VBox(10, AddStratscode,AddStratscodefield,AddStratscode2);
         AddStratscodeBox.setPadding(new Insets(10));
         AddStratsCodeScene = new Scene(AddStratscodeBox, 350, 150);
+        AddStratsCodeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         AddStratscodeButton.setOnAction(event ->  primaryStage.setScene(AddStratsCodeScene));
         primaryStage.show();
         AddStratscode2.setOnAction(event ->  {
@@ -319,7 +329,7 @@ public class TransactionController {
 
         mainScene = new Scene(mainLayout, 700, 600);
         primaryStage.setScene(mainScene);
-
+        mainScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
        
         databaseManager.createDatabase();
         databaseManager.createTransactionTable();

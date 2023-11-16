@@ -12,5 +12,6 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         TransactionController transactionController = new TransactionController();
         transactionController.start(primaryStage);
+ 
     }
 }

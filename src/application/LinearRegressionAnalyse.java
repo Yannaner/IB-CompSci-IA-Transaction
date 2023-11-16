@@ -12,8 +12,6 @@ import java.util.List;
 
 public class LinearRegressionAnalyse {
 
-   
-
     public void displayLinearRegressionChart(DatabaseManager dbManager) {
         List<Pair<Double, Double>> data = dbManager.getPriceAndAmountData();
 
@@ -48,6 +46,7 @@ public class LinearRegressionAnalyse {
         
         scatterChart.getData().add(series);
         scatterChart.getData().add(regressionLineSeries);
+        
         //linear equation
         String equation = String.format("y = %.2fx + %.2f", lr.getSlope(), lr.getIntercept());
         scatterChart.setTitle("Linear Regression: " + equation);
