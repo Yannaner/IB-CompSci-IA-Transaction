@@ -1,0 +1,31 @@
+Criterion A Planning
+Defining the problem:
+Mr Wang is currently building a quantitative trading system; he is looking into investing in the cryptocurrency market. That means trading history information is crucial for him. If he can have access to the trading history records, he will be able to fully track his trading process and use these records for system backtesting. Before the program is invented, his trading history records will be recorded in the exchange, and he will have to download the data manually. However, this process does not allow him to perform real-time backtesting calculations. Therefore, he needs a feature that can record his trading details in real-time after our trades are completed to help him with backtesting analysis. Without this program, he will not be able to backtest his trading strategies in a timely manner. If his trading strategies are flawed, it could result in significant losses. Therefore, he needs a program to help him keep track of his trading history to help him create better investment strategies.
+
+Word Count: 165
+
+The Rationale for Proposed Solution:                 
+In order to solve Mr. Wang’s problem, I’ve decided to use a Java application. I’ve chosen Java for the main application simply because it is not only free, but I am most familiar with it. It is important to note that Java can run on most devices, so it can be easier for me to implement it on the client’s system.
+
+The application should be easy to use without any misleading information. All the data the user enters should be stored in a database with backup in case of a loss of important data. All the transactions should be sorted and listed in the time range given by the user. The user should be able to create transaction information with details such as the kind of cryptocurrency, the price, the amount, etc. The user should also be able to delete a previous transaction due to the wrong information inserted. All the data inserted should be automatically sorted and listed for future reference. This will allow the user to create a better investment strategy according to the current trends.
+
+Word Count: 196
+
+Application Success Criteria:
+A login page with pre-set username and password to control access and protect the data
+Data entry panel to add a new transaction type
+The transaction type being added is written into the CSV file
+Able to read the CSV file
+Data entry panel to edit previous transactions
+A preview before adding the new transaction into the database in case of a typing error
+Can read the CSV file and import it to the database
+Data entry panel to search previous transactions with time
+Data entry panel to search previous transactions with cryptocurrency
+Data entry panel to search previous transactions with stratscode
+A page to view and sort all the previous transactions with time 
+Data entry panel to delete previous transactions
+All the data entry panels should meet validation requirements in terms of length, characters, and presence
+The program can analyze data that clients require
+
+
+
