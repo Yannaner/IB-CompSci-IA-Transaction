@@ -1,4 +1,5 @@
 package application;
+
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,8 +11,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import java.sql.Timestamp;
 import java.time.Instant;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -36,6 +39,8 @@ public class TransactionController {
     private Scene AddCCYScene;
     private Scene AddStratsCodeScene;
     private final DatabaseManager databaseManager;
+    
+    //Public Object Declaration
     ChoiceBox<String> CcyChoicebox = new ChoiceBox<>();
     ChoiceBox<String> StratscodeChoicebox = new ChoiceBox<>();
     LineChartAnalyse lca = new LineChartAnalyse();
@@ -71,13 +76,15 @@ public class TransactionController {
         });
 
         loginScene = new Scene(loginBox, 400, 200);
-        //initialize the item in ccy + stratscode choice box
+        //initialize the item in CCY + Stratscode choice box
         CcyChoicebox.getItems().addAll(FileManager.readCryptoTypes());
         StratscodeChoicebox.getItems().addAll(FileManager.readStratscodeTypes());
         primaryStage.setScene(loginScene);
         primaryStage.show();
     }
-
+    
+    
+    //Preset passwords, for demonstration purposes, equals to empty
     private boolean validateLogin(String username, String password) {
         if (username.equals("") && password.equals("")){
         	return true;
@@ -87,26 +94,23 @@ public class TransactionController {
 		return false;
     }
    
-
+    //alert method
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-        //alert method
+        
     }
 
     private void showMainScene() {
-        // Data entry 
+    	
         Label cryptocurrencyLabel = new Label("Cryptocurrency:");
-     
-    
         Button AddCcyButton = new Button("Add a New Type of CCY");
         Label Addccy = new Label("Add a new cryptocurrency type:");
         TextField Addccytextfield = new TextField();
         Button AddCcyButton2 = new Button("Add a New Type of CCY");
-        
         Button AddStratscodeButton = new Button("Add a New Type of Stratscode");
         Label AddStratscode = new Label("Add a new Stratscode: ");
         TextField AddStratscodefield = new TextField();
@@ -132,11 +136,9 @@ public class TransactionController {
         AddStratscode2.setOnAction(event ->  {
         	addStratscodetype(AddStratscodefield.getText());
         	AddStratscodefield.clear();
-    });
+        });
         
-     
-        
-        
+        //GUI
         Label priceLabel = new Label("Price:");
         priceField = new TextField();
         Label amountLabel = new Label("Amount:");
@@ -148,8 +150,7 @@ public class TransactionController {
         VBox importBox = new VBox(10, importButton);
         importBox.setPadding(new Insets(10));
 
-      
-        //GUI layout
+        //GUI
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setHgap(10);
@@ -171,12 +172,11 @@ public class TransactionController {
         ImportButton.getChildren().add(importButton);
         grid.add(ImportButton, 1, 5);
         
+        //Import and Add transaction button
         importButton.setOnAction(event -> importTransactionsFromCsv());
         addButton.setOnAction(event -> addTransaction(CcyChoicebox));
-
         
-        
-        // Page to view and sort all previous transactions by time
+        //Columns to add to the Table view
         TableColumn<Transaction, String> cryptocurrencyColumn = new TableColumn<>("Cryptocurrency");
         cryptocurrencyColumn.setPrefWidth(150);
         TableColumn<Transaction, Double> priceColumn = new TableColumn<>("Price");
@@ -188,7 +188,7 @@ public class TransactionController {
         TableColumn<Transaction, Timestamp> timestampColumn = new TableColumn<>("Time");
         timestampColumn.setPrefWidth(150);
 
-        
+        //Create the Table view for the transaction
         transactionTable = new TableView<>();
         transactionTable.getColumns().addAll(cryptocurrencyColumn, priceColumn, amountColumn,stratsCodeColumn,timestampColumn);
         VBox transactionTableBox = new VBox(20, transactionTable);
@@ -201,7 +201,7 @@ public class TransactionController {
         Button AnalyseButton = new Button("Analyse");
         Button refresh = new Button("Refresh Table");
         DatePicker startDatePicker = new DatePicker();
-        Label toLabel = new Label("to");
+        Label toLabel = new Label("To");
         DatePicker endDatePicker = new DatePicker();
         Label CCYLabel = new Label("Trend Analysis Type");
         Label nameOrStratsLabel = new Label("Selecte the type");
@@ -218,7 +218,7 @@ public class TransactionController {
         searchArea.setPadding(new Insets(10));
         
         
-      //Analysis I can do with my datas
+        //Analysis I can do with data
         ChoiceBox<String> AnalyseChoicebox = new ChoiceBox<>();
         AnalyseChoicebox.getItems().add("LineChartAnalyse");
         AnalyseChoicebox.getItems().add("ScatterChartAnalyse");
@@ -231,18 +231,18 @@ public class TransactionController {
         bottomAnalysis.setPadding(new Insets(10));
         HBox datePickers = new HBox(10, startDatePicker, toLabel, endDatePicker);
         datePickers.setAlignment(Pos.CENTER_LEFT);
-        datePickers.setPadding(new Insets(10));
-        
+        datePickers.setPadding(new Insets(10));     
         VBox topSection = new VBox(5, topButtons);
         VBox bottomSection = new VBox(5, datePickers,searchArea, bottomAnalysis);
         borderPane.setTop(topSection);
         borderPane.setCenter(transactionTableBox);
         borderPane.setBottom(bottomSection);
      
-        
-        
+        //the choicebox types when user choose CCY or Stratscode
         nameOrStrats.getItems().add("Cryptocurrency");
         nameOrStrats.getItems().add("Stratscode");
+        
+        //Action listener for types
         nameOrStrats.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             nameOrStratsField.getItems().clear();
             if ("Cryptocurrency".equals(newValue)) {
@@ -252,7 +252,7 @@ public class TransactionController {
             }
         });
         
-        //Chart Analyse
+        //Chart Analysis + Action listener for all kinds of Analysis
         AnalyseChoicebox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 if (newValue.equals("LineChartAnalyse")) {
@@ -267,11 +267,12 @@ public class TransactionController {
             }
         });
    
+        //Button for edit and delete
         editButton.setOnAction(event -> editTransaction());
         deleteButton.setOnAction(event -> deleteTransaction());
         
 
-        
+        //Active listener that can know when the data field got a new input, it will reevaluate the method being implemented to searchButton
         ChangeListener<Object> ListenerForSearch = (observable, oldValue, newValue) -> {
             if (nameOrStratsField.getValue() != null && !nameOrStratsField.getValue().isEmpty() 
                 && startDatePicker.getValue() != null && endDatePicker.getValue() != null) {
@@ -325,6 +326,7 @@ public class TransactionController {
         loadTransactions();
     }
     
+    //Add CCY type or Strats code type into CSV files
     private void addCCYtype(String ccy) {
     	CcyChoicebox.getItems().add(ccy);
     	primaryStage.setScene(mainScene);
@@ -335,6 +337,8 @@ public class TransactionController {
     	primaryStage.setScene(mainScene);
     	FileManager.writeStratscodeTypes(StratscodeChoicebox.getItems());
     }
+    
+    
     private void addTransaction(ChoiceBox<String> CcyChoicebox) {
     	String cryptocurrency = CcyChoicebox.getValue();
     	double amount = Double.parseDouble(amountField.getText());
@@ -354,6 +358,7 @@ public class TransactionController {
     	StratsCodeField.clear();
     }
     
+    //Method that load the transaction Table
     private void loadTransactions() {
     	transactionTable.getItems().clear();
     	
@@ -393,7 +398,7 @@ public class TransactionController {
             Stage editStage = new Stage();
             editStage.setTitle("Edit Transaction");
 
-            // Create the data input fields for updated values
+            //GUI for update values
             Label cryptocurrencyLabel = new Label("Cryptocurrency:");
             Label priceLabel = new Label("Price:");
             TextField priceField = new TextField(String.valueOf(selectedTransaction.getPrice()));
@@ -408,7 +413,9 @@ public class TransactionController {
                 double updatedPrice = Double.parseDouble(priceField.getText());
                 double updatedamount = Double.parseDouble(amountField.getText());
                 String updatedStratsCode= StratscodeChoicebox.getValue();
-                // Update the selected transaction
+                
+                
+                // Update the selected transaction with new Inputs
                 selectedTransaction.setCryptocurrency(updatedCryptocurrency);
                 selectedTransaction.setPrice(updatedPrice);
                 selectedTransaction.setAmount(updatedamount);
@@ -443,6 +450,12 @@ public class TransactionController {
         }
     }
     
+    
+    /* Override
+     * Can search with Date + CCY/Stratscode
+     * Can search with Date Only
+     * Can search with CCY/Stratscode only
+     */
     private void searchTransactions(LocalDate startDate, LocalDate endDate) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
@@ -467,7 +480,7 @@ public class TransactionController {
         
     }
  
-   
+ 
     private void searchwithBoth(LocalDate startDate, LocalDate endDate,String cryptocurrency) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
@@ -483,7 +496,7 @@ public class TransactionController {
         transactionTable.setItems(filteredTransactions);
     }
  
-
+    
     private void deleteTransaction() {
         Transaction selectedTransaction = transactionTable.getSelectionModel().getSelectedItem();
         if (selectedTransaction != null) {
@@ -497,6 +510,7 @@ public class TransactionController {
         }
     }
 
+    //CSV file import
     private void importTransactionsFromCsv() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import CSV");
@@ -514,7 +528,8 @@ public class TransactionController {
             }
         }
     }
-
+    
+    //CSV Reader
     private List<Transaction> readTransactionsFromCsv(File file) {
         List<Transaction> transactions = new ArrayList<>();
 
@@ -540,8 +555,6 @@ public class TransactionController {
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }
-
         return transactions;
     }
-
 }

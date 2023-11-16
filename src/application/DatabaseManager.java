@@ -150,6 +150,7 @@ public class DatabaseManager {
         }
     }
 
+    //Adding transaction data into database
     public void insertTransactions(List<Transaction> transactions) {
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
             String query = "INSERT INTO transactions (cryptocurrency, price, amount, stratscode) VALUES (?, ?, ?, ?)";
@@ -172,12 +173,16 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+    
+    //Data calculation for Standard deviation Analyse
     public double calculateStandardDeviation(List<Double> values) {
         double mean = values.stream().mapToDouble(d -> d).average().orElse(0.0);
         double variance = values.stream().mapToDouble(d -> (d - mean) * (d - mean)).sum() / values.size();
         return Math.sqrt(variance);
     }
 
+    
+    //Data calculation for Standard deviation Analyse
     public Pair<Double, Double> getStandardDeviations() {
         List<Transaction> transactions = getTransactionData();
         List<Double> prices = transactions.stream().map(Transaction::getPrice).collect(Collectors.toList());
@@ -188,6 +193,8 @@ public class DatabaseManager {
 
         return new Pair<>(priceStdDev, amountStdDev);
     }
+    
+    //Data fetching from database specifically for Standard deviation Analysis
     public List<Transaction> getCCYTransactions() {
         List<Transaction> dataList = new ArrayList<>();
        
@@ -208,6 +215,8 @@ public class DatabaseManager {
 
         return dataList;
     }
+    
+    //Data fetching from database specifically for Linear Regression Analyse
     public List<Pair<Double, Double>> getPriceAndAmountData() {
         List<Pair<Double, Double>> data = new ArrayList<>();
         String sql = "SELECT price, amount FROM transactions"; 
