@@ -10,7 +10,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 
 public class SDChartAnalyse {
 	
