@@ -452,7 +452,7 @@ public class TransactionController {
                 transactionData = dbManager.getTransactionData();
                 editStage.close();
 
-                showAlert("Transaction Updated", "The selected transaction has been updated successfully.");
+                showAlert("Transaction Updated", "The transaction has been updated successfully.");
             });
 
             cancelButton.setOnAction(event -> editStage.close());
@@ -494,7 +494,7 @@ public class TransactionController {
     	ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
         for (Transaction transaction : transactionTable.getItems()) {
-            if (transaction.getCryptocurrency().equalsIgnoreCase(ccyOrStrat) ||transaction.getStratscode().equalsIgnoreCase(ccyOrStrat)) {
+            if (transaction.getCryptocurrency().equalsIgnoreCase(ccyOrStrat) || transaction.getStratscode().equalsIgnoreCase(ccyOrStrat)) {
                 filteredTransactions.add(transaction);
             }
         }
@@ -502,13 +502,12 @@ public class TransactionController {
         
     }
  
- 
-    private void searchwithBoth(LocalDate startDate, LocalDate endDate,String cryptocurrency) {
+    private void searchwithBoth(LocalDate startDate, LocalDate endDate,String ccyOrStrat) {
         ObservableList<Transaction> filteredTransactions = FXCollections.observableArrayList();
 
         for (Transaction transaction : transactionTable.getItems()) {
         	LocalDate transactionDate = transaction.getTimestamp().toLocalDateTime().toLocalDate();
-            if (transaction.getCryptocurrency().equalsIgnoreCase(cryptocurrency)) {
+            if (transaction.getCryptocurrency().equalsIgnoreCase(ccyOrStrat)|| transaction.getStratscode().equalsIgnoreCase(ccyOrStrat)) {
             	if (!transactionDate.isBefore(startDate) && !transactionDate.isAfter(endDate)) {
                     filteredTransactions.add(transaction);
                 }
