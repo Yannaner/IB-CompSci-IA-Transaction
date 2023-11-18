@@ -348,23 +348,37 @@ public class TransactionController {
     
     
     private void addTransaction(ChoiceBox<String> CcyChoicebox) {
+    	//Data validity checker
+    	boolean flag = false;
+    	while(!flag) {
+        	try {
+                double amount = Double.parseDouble(amountField.getText());
+                double price = Double.parseDouble(priceField.getText());
+                flag = true;
+            } catch (NumberFormatException e) {
+                showAlert("Invalid input.", "Please enter a valid double value.");
+                break;
+            }
+    	}
+    	
     	String cryptocurrency = CcyChoicebox.getValue();
     	double amount = Double.parseDouble(amountField.getText());
     	double price = Double.parseDouble(priceField.getText());
     	String stratsCode = StratscodeChoicebox.getValue();
-    	Timestamp timestamp = Timestamp.from(Instant.now());
-    	//time rn
-    	
+    	Timestamp timestamp = Timestamp.from(Instant.now()); //instant.now() is the time right now
+ 
+  
+    	if(flag==true) {
     	//adding transaction to the database
     	databaseManager.addTransaction(cryptocurrency, price, amount,stratsCode, timestamp);
-    	
-    	
     	showAlert("Success", "Transaction added successfully");
     	
     	priceField.clear();
     	amountField.clear();
     	StratsCodeField.clear();
+    	}
     }
+    	
     
     //Method that load the transaction Table
     private void loadTransactions() {
