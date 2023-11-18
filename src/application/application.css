@@ -1,0 +1,52 @@
+.root{
+	-fx-background-color:#adadad;
+}
+.label{
+	-fx-font-size: 14;
+	-fx-font-family: "Times New Roman";
+}
+.button{
+	-fx-font-size: 14;
+	-fx-font-family: "Times New Roman";
+}
+.text-field {
+    -fx-font-size: 14;
+    -fx-font-family: "Times New Roman";
+}
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: -fx-focus-color;
+}
+.table-view .column-header .label {
+    -fx-font-size: 14;
+    -fx-font-family: "Times New Roman";
+    -fx-text-fill: black;
+    -fx-alignment: center-left;
+    -fx-opacity: 1;
+}
+.table-view .column-header, .table-view .filler {
+    -fx-size: 35;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+    -fx-border-color: 
+        transparent
+        transparent
+        derive(-fx-base, 80%) 
+        transparent;
+    -fx-border-insets: 0 7 1 0;
+}
+.table-view {
+    -fx-base: #adadad;
+    -fx-control-inner-background: #adadad;
+    -fx-background-color: #adadad;
+    -fx-padding: 5;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+.label-bright {
+    -fx-font-size: 14;
+    -fx-font-family: "Times New Roman";
+    -fx-text-fill: white;
+    -fx-opacity: 1;
+}
