@@ -118,21 +118,30 @@ public class TransactionController {
         Label AddStratscode = new Label("Add a new Stratscode: ");
         TextField AddStratscodefield = new TextField();
         Button AddStratscode2 = new Button("Add a New Type of Stratscode");
+        Button Back = new Button("Back");
+        Button Back2 = new Button("Back");
         
         //Choice box for ccy
-        VBox AddCCYBox = new VBox(10, Addccy,Addccytextfield,AddCcyButton2);
+        VBox AddCCYBox = new VBox(10, Addccy,Addccytextfield,AddCcyButton2,Back);
         AddCCYBox.setPadding(new Insets(10));
         AddCCYScene = new Scene(AddCCYBox, 350, 150);
         AddCCYScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
         AddCcyButton.setOnAction(event ->  primaryStage.setScene(AddCCYScene));
         primaryStage.show();
+        
         AddCcyButton2.setOnAction(event ->  {
         	addCCYtype(Addccytextfield.getText());
         	Addccytextfield.clear();
         });
         
+        Back.setOnAction(event ->{
+        	primaryStage.setScene(mainScene);
+        	primaryStage.show();
+        });
+        
+        
         //Choice box for stratscode
-        VBox AddStratscodeBox = new VBox(10, AddStratscode,AddStratscodefield,AddStratscode2);
+        VBox AddStratscodeBox = new VBox(10, AddStratscode,AddStratscodefield,AddStratscode2,Back2);
         AddStratscodeBox.setPadding(new Insets(10));
         AddStratsCodeScene = new Scene(AddStratscodeBox, 350, 150);
         AddStratsCodeScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -141,6 +150,10 @@ public class TransactionController {
         AddStratscode2.setOnAction(event ->  {
         	addStratscodetype(AddStratscodefield.getText());
         	AddStratscodefield.clear();
+        });
+        Back2.setOnAction(event ->{
+        	primaryStage.setScene(mainScene);
+        	primaryStage.show();
         });
         
         //GUI
