@@ -57,9 +57,6 @@ public class TransactionController {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
        
-        
-        
-        
         primaryStage.setTitle("Transaction Program");
         Label usernameLabel = new Label("Username:");
         TextField usernameField = new TextField();
@@ -111,7 +108,7 @@ public class TransactionController {
     }
 
     private void showMainScene() {
-    	
+    	//GUI
         Label cryptocurrencyLabel = new Label("Cryptocurrency:");
         Button AddCcyButton = new Button("Add a New Type of CCY");
         Label Addccy = new Label("Add a new cryptocurrency type:");
@@ -352,12 +349,16 @@ public class TransactionController {
     	boolean flag = false;
     	while(!flag) {
         	try {
+        		
                 double amount = Double.parseDouble(amountField.getText());
                 double price = Double.parseDouble(priceField.getText());
                 flag = true;
+                
             } catch (NumberFormatException e) {
-                showAlert("Invalid input.", "Please enter a valid double value.");
+            	
+                showAlert("Invalid input.", "Please enter a valid value.");
                 break;
+                
             }
     	}
     	
@@ -366,10 +367,9 @@ public class TransactionController {
     	double price = Double.parseDouble(priceField.getText());
     	String stratsCode = StratscodeChoicebox.getValue();
     	Timestamp timestamp = Timestamp.from(Instant.now()); //instant.now() is the time right now
- 
   
     	if(flag==true) {
-    	//adding transaction to the database
+    	//adding transaction to the database if the data input is valid
     	databaseManager.addTransaction(cryptocurrency, price, amount,stratsCode, timestamp);
     	showAlert("Success", "Transaction added successfully");
     	
