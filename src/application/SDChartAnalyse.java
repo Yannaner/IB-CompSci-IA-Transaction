@@ -43,11 +43,33 @@ public class SDChartAnalyse {
             double priceStdDev = dbManager.calculateStandardDeviation(pricesUpToCurrent);
             double amountStdDev = dbManager.calculateStandardDeviation(amountsUpToCurrent);
             XYChart.Data<Number, Number> dataPoint = new XYChart.Data<>(priceStdDev, amountStdDev);
+            
             series.getData().add(dataPoint);
+            
             StackPane node = new StackPane();
             Label label = new Label(String.format("P: %.2f, A: %.2f", priceStdDev, amountStdDev));
+            label.setStyle("-fx-background-color: transparent;");
+            node.setStyle("-fx-background-color: transparent;");
+            
+            
             node.getChildren().add(label);
             dataPoint.setNode(node);
+            label.setOpacity(0);
+            
+            node.setOpacity(0);
+            node.setOnMouseEntered(e -> {
+            	label.setOpacity(1);
+            	label.setTranslateY(20);
+                node.setOpacity(1); 
+            });
+            node.setOnMouseExited(e -> {
+                node.setOpacity(0); 
+                label.setOpacity(0); 
+            });
+
+
+            
+            
             series.getData().add(new XYChart.Data<>(priceStdDev, amountStdDev));
         }
 
