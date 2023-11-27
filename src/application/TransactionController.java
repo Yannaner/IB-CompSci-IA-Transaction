@@ -362,7 +362,6 @@ public class TransactionController {
     	boolean flag = false;
     	while(!flag) {
         	try {
-        		
                 double amount = Double.parseDouble(amountField.getText());
                 double price = Double.parseDouble(priceField.getText());
                 flag = true;
@@ -379,8 +378,7 @@ public class TransactionController {
     	double amount = Double.parseDouble(amountField.getText());
     	double price = Double.parseDouble(priceField.getText());
     	String stratsCode = StratscodeChoicebox.getValue();
-    	Timestamp timestamp = Timestamp.from(Instant.now()); //instant.now() is the time right now
-  
+    	Timestamp timestamp = Timestamp.from(Instant.now()); //time right now
     	if(flag==true) {
     	//adding transaction to the database if the data input is valid
     	databaseManager.addTransaction(cryptocurrency, price, amount,stratsCode, timestamp);
