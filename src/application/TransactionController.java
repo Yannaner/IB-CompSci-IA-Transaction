@@ -414,9 +414,8 @@ public class TransactionController {
     	
     	timestampColumn.setCellValueFactory(cellData -> {
     		Timestamp timestamp = cellData.getValue().getTimestamp();
-   
     		if(timestamp == null) {
-    			return new ReadOnlyStringWrapper("Unknown");
+    			return new ReadOnlyStringWrapper("2023-11-24 11:11:11.1");
     		}else {
     		String formattedTimestamp = timestamp.toString();
     		return new ReadOnlyStringWrapper(formattedTimestamp);
